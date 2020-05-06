@@ -22,37 +22,4 @@ public class Employee {
 		this.name = name;
 		this.role = role;
 	}
-
-	/* TODO: Transient solution. Need to repair lombok dependency */
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getRole() {
-		return role;
-	}
-
-	public void setRole(String role) {
-		this.role = role;
-	}
-	
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	@Override
-	public String toString() {
-		return "Employee [name=" + name + ", role=" + role + "]";
-	}
-	
-	/* TODO: <END> Transient solution. Need to repair lombok dependency */
-	
 }
