@@ -19,9 +19,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class EmployeeController {
 
 	private final EmployeeRepository repository;
+	
+	private final EmployeeModelAssembler assembler; 
 
-	EmployeeController(EmployeeRepository repository) {
+	EmployeeController(EmployeeRepository repository, EmployeeModelAssembler assembler) {
 		this.repository = repository;
+		this.assembler = assembler;
 	}
 
 //	Aggregate root
@@ -50,9 +53,7 @@ public class EmployeeController {
 		Employee employee = repository.findById(id)
 				.orElseThrow(() -> new EmployeeNotFoundException(id));
 		
-		return new EntityModel<> (employee,
-				linkTo(methodOn(EmployeeController.class).one(id)).withSelfRel(),
-				linkTo(methodOn(EmployeeController.class).all()).withRel("employees"));
+		return assembler.toModel(employee);
 	}
 
 	@PutMapping("/employees/{id}")
