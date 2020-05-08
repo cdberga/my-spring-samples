@@ -1,5 +1,6 @@
 package br.com.example.payroll;
 
+import java.net.URISyntaxException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -7,6 +8,8 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.IanaLinkRelations;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,9 +35,7 @@ public class EmployeeController {
 	@GetMapping("/employees")
 	CollectionModel<EntityModel<Employee>> all() {
 		List<EntityModel<Employee>> employees = repository.findAll().stream()
-				.map(employee -> new EntityModel<>(employee,
-						linkTo(methodOn(EmployeeController.class).one(employee.getId())).withSelfRel(),
-						linkTo(methodOn(EmployeeController.class).all()).withRel("employees")))
+				.map(assembler::toModel)
 				.collect(Collectors.toList());
 		
 		return new CollectionModel<>(employees, 
@@ -42,8 +43,11 @@ public class EmployeeController {
 	}
 
 	@PostMapping("/employees")
-	Employee newEmployee(@RequestBody Employee newEmployee) {
-		return repository.save(newEmployee);
+	ResponseEntity<?> newEmployee(@RequestBody Employee newEmployee) throws URISyntaxException {
+		EntityModel<Employee> entityModel = assembler.toModel(repository.save(newEmployee));
+		return ResponseEntity
+				.created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri())
+				.body(entityModel);
 	}
 
 //	Single item
