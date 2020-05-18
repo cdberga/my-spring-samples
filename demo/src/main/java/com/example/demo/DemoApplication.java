@@ -8,6 +8,7 @@ import java.util.UUID;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
+import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -18,7 +19,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 @SpringBootApplication
 @RestController
-public class DemoApplication {
+public class DemoApplication implements ErrorController{
+	
+	private final static String PATH = "/error"; 
 
 	@RequestMapping("/resource")
 	public Map<String, Object> home() {
@@ -54,6 +57,17 @@ public class DemoApplication {
 				.csrf()
 				.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());
 		}
+	}
+
+	
+	@RequestMapping(value=PATH)
+	public String error() {
+		return "forward:/index.html";
+	}
+	
+	@Override
+	public String getErrorPath() {
+		return PATH;
 	}
 
 }
