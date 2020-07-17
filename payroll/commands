@@ -1,0 +1,9 @@
+# used with ENTRYPOINT ["java","-jar","/app.jar"]
+docker build --build-arg JAR_FILE=target/*.jar -t myorg/myapp .
+docker run -p 8080:8080 myorg/myapp
+
+#used with ENTRYPOINT ["sh", "-c", "java ${JAVA_OPTS} -jar /app.jar"]
+docker run -p 8080:8080 -e "JAVA_OPTS=-Ddebug -Xmx128m" myorg/myapp
+
+#used with ENTRYPOINT ["sh", "-c", "java ${JAVA_OPTS} -jar /app.jar ${0} ${@}"]
+docker run -p 9000:9000 myorg/myapp --server.port=9000
